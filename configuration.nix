@@ -10,14 +10,17 @@
       ./hardware-configuration.nix
     ];
 
-  # Garbage colloction
-  nix.gc.dates = "weekly";
-
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   nixpkgs.config.allowUnfree = true;
+
+  # Garbage colloction
+  nix.gc.dates = "weekly";
+
+  # do nothing on pressing power button
+  services.logind.extraConfig = ''HandlePowerKey=ignore'' ;
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -78,9 +81,9 @@
       ];
     };
 
-    videoDrivers = [ "intel" ];                                                                                                                  deviceSection = ''                                                                            
-      Option "DRI" "2"                                                                            
-      Option "TearFree" "true"                                                                    
+    videoDrivers = [ "intel" ];                                                                                                              deviceSection = ''
+      Option "DRI" "2"
+      Option "TearFree" "true"
     '';
   };
   # services.compton.enable = true;
@@ -114,17 +117,42 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    # Text editors
     vim 
     emacs
+
+    # consol commands
+    bintools
     git
     zsh
     exa
-    kitty
     starship
     htop
+    light # for screen brightness
+
+    # terminal emulators
+    kitty
+
+    # web
     wget
     firefox
     google-chrome
+
+    # Libraries
+    ## OpenCL
+    ocl-icd
+
+    # Programming Languages
+    ## C/C++
+    gcc
+    clang
+    ## Rust
+    rustc
+    rls
+    cargo
+    ## Haskell
+    stack
+    haskellPackages.haskell-language-server
   ];
 
   security.sudo.wheelNeedsPassword = false; 

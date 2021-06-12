@@ -31,17 +31,24 @@
   # high-resolution display
   hardware.video.hidpi.enable = lib.mkDefault true;
 
+  hardware.opengl.extraPackages = with pkgs; [
+    intel-compute-runtime
+    intel-media-driver # LIBVA_DRIVER_NAME=iHD
+    vaapiIntel         # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+    vaapiVdpau
+    libvdpau-va-gl
+  ];
+
   # Enable camera for macbook
   hardware.facetimehd.enable = true;
 
   nixpkgs.config.packageOverrides = pkgs: {
-    # TODO: If you need Thunderbolt module you can uncomment the
-    # block below:
-    #linux = pkgs.linuxPackages.override {
-    #  extraConfig = ''
-    #    THUNDERBOLT m
-    #  '';
-    #};
+    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
+    linux = pkgs.linuxPackages.override {
+      extraConfig = ''
+        THUNDERBOLT m
+      '';
+    };
   };
 
   services.xserver.synaptics = {
