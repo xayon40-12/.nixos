@@ -28,6 +28,9 @@
     [ { device = "/dev/disk/by-uuid/7e6acc0d-96f8-4ddc-a18e-23d214bdb4c1"; }
     ];
 
+  # use dhcp for wifi
+  networking.interfaces.wlp3s0.useDHCP = true;
+
   # high-resolution display
   hardware.video.hidpi.enable = lib.mkDefault true;
 
